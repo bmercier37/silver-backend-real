@@ -1,7 +1,7 @@
 // scrapeChinaFX.js
 
 import fetch from "node-fetch";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 
 /**
  * Scrape Silver NY price from ChinaFXTools
