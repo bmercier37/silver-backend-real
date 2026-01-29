@@ -28,7 +28,7 @@ export async function insertData(db, data) {
     INSERT INTO market_data (
       timestamp, silverNY, silverLondon, silverSHA,
       goldNY, goldSilverRatio, spreadSHA_NY
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)
   `);
   await stmt.run(
     data.timestamp,
