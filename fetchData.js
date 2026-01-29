@@ -1,51 +1,52 @@
 // fetchData.js
-import {
-  scrapeSilverNY,
-  scrapeSilverLondon,
-  scrapeSilverShanghai,
-  scrapeGoldNY,
-  scrapeFXRateRMBUSD
-} from "./scrapeChinaFX.js";
-
+import { scrapeSilverNY, scrapeSilverLondon, scrapeSilverShanghai, scrapeGoldNY, scrapeFX_USD_RMB } from "./scrapeChinaFX.js";
 import { initDB, insertData } from "./db.js";
-
-const KG_TO_OZ = 31.1035;
 
 export async function fetchAndStore() {
   const db = await initDB();
 
   // Scraping réel
-  const silverNY = await scrapeSilverNY();                 // USD/oz
-  const silverLondon = await scrapeSilverLondon();         // USD/oz
-  const silverSHA_RMB = await scrapeSilverShanghai();      // RMB/kg
-  const goldNY = await scrapeGoldNY();                     // USD/oz
-  const USD_CNY = await scrapeFXRateRMBUSD();              // CNY per USD
+  const silverNY = await scrapeSilverNY();
+  const silverLondon = await scrapeSilverLondon();
+  const silverSHA_RMB = await scrapeSilverShanghai();
+  const goldNY = await scrapeGoldNY();
+  const FX_USD_RMB = await scrapeFX_USD_RMB();
 
-  if (!silverNY || !silverLondon || !silverSHA_RMB || !goldNY || !USD_CNY) {
+  // Vérification
+  if (
+    silverNY == null ||
+    silverLondon == null ||
+    silverSHA_RMB == null ||
+    goldNY == null ||
+    FX_USD_RMB == null
+  ) {
+    console.error("Initial fetch failed: Missing scraped data");
+    await db.close();
     throw new Error("Missing scraped data");
   }
 
-  // Conversion Shanghai → USD/oz
-  const silverSHA = silverSHA_RMB / USD_CNY / KG_TO_OZ;
+  // Conversion Silver SHA kg → oz
+  const silverSHA = silverSHA_RMB * FX_USD_RMB / 31.1035;
 
-  // Ratios & spreads
+  // Calcul ratios et spreads
   const goldSilverRatio = goldNY / silverNY;
   const spreadSHA_NY = ((silverSHA - silverNY) / silverNY) * 100;
 
+  // Préparer l'objet de données correspondant aux colonnes SQLite
   const data = {
     timestamp: new Date().toISOString(),
     silverNY,
     silverLondon,
     silverSHA,
     goldNY,
-    usdCny: USD_CNY,
+    FX_USD_RMB,
     goldSilverRatio,
     spreadSHA_NY
   };
 
   await insertData(db, data);
-  await db.close();
-
   console.log("Data stored:", data);
+
+  await db.close();
   return data;
 }
