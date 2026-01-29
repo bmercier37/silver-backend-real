@@ -75,11 +75,34 @@ export async function scrapeGoldNY() {
     }
 }
 
-/**
- * Pour l'instant, les autres fonctions restent fake
- */
-export async function scrapeSilverIndia() {
-  return 1000 + Math.random() * 50; // INR/oz
-}
+export async function scrapeFXRateRMBUSD() {
+    try {
+        const url = "https://www.chinafxtools.com/exchange/";
+        const html = await fetch(url).then(res => res.text());
+        const $ = cheerio.load(html);
 
+        // Recherche le bloc où est affiché le taux USD → CNY
+        // On cherche un élément qui contient "USD" suivi du nombre en CNY
+        let rateText = "";
+        $(".major-currency-table, .exchange-rate-table, .fx-table")
+            .each((i, el) => {
+                const text = $(el).text();
+                if (text.includes("USD")) {
+                    // trouve le taux autour de USD
+                    const match = text.match(/USD\s*([0-9]+(?:\.[0-9]+)?)\s*CNY/);
+                    if (match) {
+                        rateText = match[1];
+                    }
+                }
+            });
 
+        if (!rateText) throw new Error("RMB/USD rate not found");
+
+        const rate = parseFloat(rateText.replace(/,/g, ""));
+        if (isNaN(rate)) throw new Error("RMB/USD rate is not a number");
+
+        return rate;
+    } catch (err) {
+        console.error("Fetch error: RMB/USD rate not found");
+        return null;
+    }
