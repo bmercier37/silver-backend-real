@@ -1,5 +1,5 @@
 // fetchData.js
-import { scrapeSilverNY, scrapeSilverLondon, scrapeSilverShanghai, scrapeGoldNY, scrapeFX_USD_RMB } from "./scrapeChinaFX.js";
+import { scrapeSilverNY, scrapeSilverLondon, scrapeSilverShanghai, scrapeGoldNY, scrapeFXRateUSDRMB } from "./scrapeChinaFX.js";
 import { initDB, insertData } from "./db.js";
 
 export async function fetchAndStore() {
@@ -10,15 +10,19 @@ export async function fetchAndStore() {
   const silverLondon = await scrapeSilverLondon();
   const silverSHA_RMB = await scrapeSilverShanghai();
   const goldNY = await scrapeGoldNY();
-  const FX_USD_RMB = await scrapeFX_USD_RMB();
+  const FX_RMB_USD = await scrapeFXRateRMBUSD();// fetchData.js
 
+export async function fetchAndStore() {
+  const db = await initDB();
+
+  
   // Vérification
   if (
     silverNY == null ||
     silverLondon == null ||
     silverSHA_RMB == null ||
     goldNY == null ||
-    FX_USD_RMB == null
+    FX_RMB_USD == null
   ) {
     console.error("Initial fetch failed: Missing scraped data");
     await db.close();
@@ -26,7 +30,7 @@ export async function fetchAndStore() {
   }
 
   // Conversion Silver SHA kg → oz
-  const silverSHA = silverSHA_RMB * FX_USD_RMB / 31.1035;
+  const silverSHA = silverSHA_RMB / FX_RMB_USD / 31.1035;
 
   // Calcul ratios et spreads
   const goldSilverRatio = goldNY / silverNY;
@@ -39,7 +43,7 @@ export async function fetchAndStore() {
     silverLondon,
     silverSHA,
     goldNY,
-    FX_USD_RMB,
+    FX_RMB_RMB,
     goldSilverRatio,
     spreadSHA_NY
   };
