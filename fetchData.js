@@ -1,45 +1,51 @@
 // fetchData.js
-import { scrapeSilverNY, scrapeSilverLondon, scrapeSilverShanghai, scrapeSilverIndia, scrapeGoldNY } from "./scrapeChinaFX.js";
+import {
+  scrapeSilverNY,
+  scrapeSilverLondon,
+  scrapeSilverShanghai,
+  scrapeGoldNY,
+  scrapeFXRateRMBUSD
+} from "./scrapeChinaFX.js";
+
 import { initDB, insertData } from "./db.js";
+
+const KG_TO_OZ = 31.1035;
 
 export async function fetchAndStore() {
   const db = await initDB();
 
-  // Scrape fake data
-  const silverNY = await scrapeSilverNY();
-  const silverLondon = await scrapeSilverLondon();
-  const silverSHA_RMB = await scrapeSilverShanghai();
-  const silverIND_INR = await scrapeSilverIndia();
-  const goldNY = await scrapeGoldNY();
+  // Scraping réel
+  const silverNY = await scrapeSilverNY();                 // USD/oz
+  const silverLondon = await scrapeSilverLondon();         // USD/oz
+  const silverSHA_RMB = await scrapeSilverShanghai();      // RMB/kg
+  const goldNY = await scrapeGoldNY();                     // USD/oz
+  const USD_CNY = await scrapeFXRateRMBUSD();              // CNY per USD
 
-  // Taux de change fixes pour fake (exemple)
-  const RMB_USD = 0.14;
-  const INR_USD = 0.012;
+  if (!silverNY || !silverLondon || !silverSHA_RMB || !goldNY || !USD_CNY) {
+    throw new Error("Missing scraped data");
+  }
 
-  // Conversion
-  const silverSHA = silverSHA_RMB * RMB_USD / 31.1035; // kg → oz
-  const silverIND = silverIND_INR * INR_USD;
+  // Conversion Shanghai → USD/oz
+  const silverSHA = silverSHA_RMB / USD_CNY / KG_TO_OZ;
 
-  // Calcul ratios et spreads
+  // Ratios & spreads
   const goldSilverRatio = goldNY / silverNY;
   const spreadSHA_NY = ((silverSHA - silverNY) / silverNY) * 100;
-  const spreadIND_NY = ((silverIND - silverNY) / silverNY) * 100;
 
   const data = {
     timestamp: new Date().toISOString(),
     silverNY,
     silverLondon,
     silverSHA,
-    silverIND,
     goldNY,
+    usdCny: USD_CNY,
     goldSilverRatio,
-    spreadSHA_NY,
-    spreadIND_NY
+    spreadSHA_NY
   };
 
   await insertData(db, data);
+  await db.close();
 
   console.log("Data stored:", data);
-  await db.close();
   return data;
 }
