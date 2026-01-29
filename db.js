@@ -14,11 +14,9 @@ export async function initDB() {
       silverNY REAL,
       silverLondon REAL,
       silverSHA REAL,
-      silverIND REAL,
       goldNY REAL,
       goldSilverRatio REAL,
-      spreadSHA_NY REAL,
-      spreadIND_NY REAL
+      spreadSHA_NY REAL
     )
   `);
 
@@ -28,8 +26,8 @@ export async function initDB() {
 export async function insertData(db, data) {
   const stmt = await db.prepare(`
     INSERT INTO market_data (
-      timestamp, silverNY, silverLondon, silverSHA, silverIND,
-      goldNY, goldSilverRatio, spreadSHA_NY, spreadIND_NY
+      timestamp, silverNY, silverLondon, silverSHA,
+      goldNY, goldSilverRatio, spreadSHA_NY
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   await stmt.run(
@@ -37,11 +35,9 @@ export async function insertData(db, data) {
     data.silverNY,
     data.silverLondon,
     data.silverSHA,
-    data.silverIND,
     data.goldNY,
     data.goldSilverRatio,
-    data.spreadSHA_NY,
-    data.spreadIND_NY
+    data.spreadSHA_NY
   );
   await stmt.finalize();
 }
