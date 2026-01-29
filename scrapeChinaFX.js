@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 import * as cheerio from "cheerio";
 
 
-// Fonction pour scraper le prix New York
+// Fonction pour scraper le prix Silver New York
 export async function scrapeSilverNY() {
     try {
         const url = "https://www.chinafxtools.com/silver/newyork/";
@@ -21,7 +21,7 @@ export async function scrapeSilverNY() {
     }
 }
 
-// scrapeChinaFX.js (ajout pour Londres)
+// Fonction pour scraper le prix Silver  Londres
 export async function scrapeSilverLondon() {
     try {
         const url = "https://www.chinafxtools.com/silver/london/";
@@ -38,7 +38,7 @@ export async function scrapeSilverLondon() {
     }
 }
 
-// scrapeChinaFX.js (ajout pour SHA)
+// Fonction pour scraper le prix Silver SHA
 export async function scrapeSilverShanghai() {
     try {
         const url = "https://www.chinafxtools.com/silver/shanghai/";
@@ -55,14 +55,25 @@ export async function scrapeSilverShanghai() {
     }
 }
 
-
-/**
- * Pour l'instant, les autres fonctions restent fake
-
-export async function scrapeSilverShanghai() {
-  return 30000 + Math.random() * 500; // RMB/kg
+// Fonction pour scraper le prix Gold NY
+export async function scrapeGoldNY() {
+    try {
+        const url = "https://www.chinafxtools.com/gold/newyork/";
+        const html = await fetch(url).then(r => r.text());
+        const $ = cheerio.load(html);
+        // On prend le deuxième span dans current-price-large .price
+        const priceText = $(".current-price-large .price span")
+            .last()   // récupère le dernier span → le prix numérique
+            .text()
+            .trim();
+        const goldNY = parseFloat(priceText.replace(/,/g, ""));
+        if (isNaN(goldNY)) throw new Error("Gold NY price not found");
+        return goldNY;
+    } catch (err) {
+        console.error("Fetch error: Gold NY price not found");
+        return null;
+    }
 }
- */
 
 /**
  * Pour l'instant, les autres fonctions restent fake
@@ -71,9 +82,4 @@ export async function scrapeSilverIndia() {
   return 1000 + Math.random() * 50; // INR/oz
 }
 
-/**
- * Pour l'instant, les autres fonctions restent fake
- */
-export async function scrapeGoldNY() {
-  return 2000 + Math.random() * 20;
-}
+
