@@ -5,7 +5,7 @@ import * as cheerio from "cheerio";
 
 
 // Fonction pour scraper le prix New York
-export async function fetchSilverNY() {
+export async function scrapeSilverNY() {
     try {
         const url = "https://www.chinafxtools.com/silver/newyork/";
         const html = await fetch(url).then(r => r.text());
