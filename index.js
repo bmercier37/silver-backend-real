@@ -40,6 +40,16 @@ cron.schedule("*/15 * * * *", async () => {
   await fetchAndStore();
 });
 
+// 🔹 Collecte immédiate au démarrage
+(async () => {
+  try {
+    console.log("Initial data fetch on startup...");
+    await fetchAndStore();
+  } catch (err) {
+    console.error("Initial fetch failed:", err.message);
+  }
+})();
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
