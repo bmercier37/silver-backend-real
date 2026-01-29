@@ -21,16 +21,28 @@ export async function scrapeSilverNY() {
     }
 }
 
+// scrapeChinaFX.js (ajout pour Londres)
+export async function scrapeSilverLondon() {
+    try {
+        const url = "https://www.chinafxtools.com/silver/london/";
+        const html = await fetch(url).then(r => r.text());
+        const $ = cheerio.load(html);
+        // Prix = deuxième span dans current-price-large .price
+        const priceText = $(".current-price-large .price span").eq(1).text().trim();
+        const silverLondon = parseFloat(priceText.replace(/,/g, ""));
+        if (isNaN(silverLondon)) throw new Error("Silver London price not found");
+        return silverLondon;
+    } catch (err) {
+        console.error("Fetch error: Silver London price not found");
+        return null;
+    }
+}
+
 /**
  * Pour l'instant, les autres fonctions restent fake
  */
 
 
-
-
-export async function scrapeSilverLondon() {
-  return 118 + Math.random() * 3;
-}
 
 export async function scrapeSilverShanghai() {
   return 30000 + Math.random() * 500; // RMB/kg
