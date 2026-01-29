@@ -45,8 +45,8 @@ export async function scrapeSilverShanghai() {
         const html = await fetch(url).then(r => r.text());
         const $ = cheerio.load(html);
         // Prix = deuxième span dans current-price-large .price
-        const priceText = $(".current-price-large .price span").eq(1).text().trim();
-        const silverLondon = parseFloat(priceText.replace(/,/g, ""));
+        const priceText = $(".current-price-large .price span").last().text().trim();
+        const silverShanghai = parseFloat(priceText.replace(/,/g, ""));
         if (isNaN(silverShanghai)) throw new Error("Silver SHA price not found");
         return silverShanghai;
     } catch (err) {
