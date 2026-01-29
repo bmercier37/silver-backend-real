@@ -104,16 +104,20 @@ export async function scrapeFXRateRMBUSD() {
     const html = await fetch(url).then(r => r.text());
     const $ = cheerio.load(html);
 
-    const rateText = $("td:contains('USD/CNY')")
-      .next()
-      .text()
-      .trim();
+    // Récupère le texte dans le div.current-rate
+    const rateText = $(".current-rate").text().trim();
 
-    const value = parseFloat(rateText);
-    if (isNaN(value)) throw new Error("USD/CNY not found");
+    // Utilise regex pour extraire le nombre avant "Chinese Yuan(CNY)"
+    const match = rateText.match(/([\d.]+)\s*Chinese Yuan\(CNY\)/);
+    if (!match) throw new Error("USD/CNY not found");
+
+    const value = parseFloat(match[1]);
+    if (isNaN(value)) throw new Error("USD/CNY is NaN");
+
     return value;
   } catch (err) {
     console.error("FX USD/CNY error");
     return null;
   }
 }
+
