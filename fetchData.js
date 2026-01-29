@@ -1,5 +1,5 @@
 // fetchData.js
-import { scrapeSilverNY, scrapeSilverLondon, scrapeSilverShanghai, scrapeGoldNY, scrapeFXRateUSDRMB } from "./scrapeChinaFX.js";
+import { scrapeSilverNY, scrapeSilverLondon, scrapeSilverShanghai, scrapeGoldNY, scrapeFXRateRMBUSD } from "./scrapeChinaFX.js";
 import { initDB, insertData } from "./db.js";
 
 export async function fetchAndStore() {
@@ -11,9 +11,6 @@ export async function fetchAndStore() {
   const silverSHA_RMB = await scrapeSilverShanghai();
   const goldNY = await scrapeGoldNY();
   const FX_RMB_USD = await scrapeFXRateRMBUSD();// fetchData.js
-
-export async function fetchAndStore() {
-  const db = await initDB();
 
   
   // Vérification
@@ -43,7 +40,7 @@ export async function fetchAndStore() {
     silverLondon,
     silverSHA,
     goldNY,
-    FX_RMB_RMB,
+    FX_RMB_USD,
     goldSilverRatio,
     spreadSHA_NY
   };
