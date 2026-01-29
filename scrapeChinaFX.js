@@ -38,20 +38,42 @@ export async function scrapeSilverLondon() {
     }
 }
 
+// scrapeChinaFX.js (ajout pour SHA)
+export async function scrapeSilverShanghai() {
+    try {
+        const url = "https://www.chinafxtools.com/silver/shanghai/";
+        const html = await fetch(url).then(r => r.text());
+        const $ = cheerio.load(html);
+        // Prix = deuxième span dans current-price-large .price
+        const priceText = $(".current-price-large .price span").eq(1).text().trim();
+        const silverLondon = parseFloat(priceText.replace(/,/g, ""));
+        if (isNaN(silverShanghai)) throw new Error("Silver SHA price not found");
+        return silverShanghai;
+    } catch (err) {
+        console.error("Fetch error: Silver SHA price not found");
+        return null;
+    }
+}
+
+
 /**
  * Pour l'instant, les autres fonctions restent fake
- */
-
-
 
 export async function scrapeSilverShanghai() {
   return 30000 + Math.random() * 500; // RMB/kg
 }
+ */
 
+/**
+ * Pour l'instant, les autres fonctions restent fake
+ */
 export async function scrapeSilverIndia() {
   return 1000 + Math.random() * 50; // INR/oz
 }
 
+/**
+ * Pour l'instant, les autres fonctions restent fake
+ */
 export async function scrapeGoldNY() {
   return 2000 + Math.random() * 20;
 }
