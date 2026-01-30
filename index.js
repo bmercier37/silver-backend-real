@@ -1,7 +1,7 @@
 // index.js
 import express from "express";
 import cors from "cors";
-import cron from "node-cron";
+//import cron from "node-cron";
 import { fetchAndStore } from "./fetchData.js";
 import { initDB, getLatest, getHistory } from "./db.js";
 
@@ -35,10 +35,10 @@ app.get("/api/test-scrape", async (req, res) => {
 });
 
 // Cron toutes les 15 minutes
-cron.schedule("*/15 * * * *", async () => {
-  console.log("Cron triggered:", new Date().toISOString());
-  await fetchAndStore();
-});
+//cron.schedule("*/15 * * * *", async () => {
+//  console.log("Cron triggered:", new Date().toISOString());
+//  await fetchAndStore();
+//});
 
 // 🔹 Collecte immédiate au démarrage
 (async () => {
