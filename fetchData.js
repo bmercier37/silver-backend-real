@@ -24,7 +24,7 @@ if (FX_RMB_USD == null) console.warn("⚠️ Scraping failed: FX USD/CNY");
 
 
   // Conversion Silver SHA kg → oz
-  const silverSHA = silverSHA_RMB / FX_RMB_USD / 31.1035;
+  const silverSHA = silverSHA_RMB * FX_RMB_USD / 31.1035;
 
   // Calcul ratios et spreads
   const goldSilverRatio = goldNY / silverNY;
