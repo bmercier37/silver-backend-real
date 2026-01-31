@@ -1,16 +1,18 @@
 // db.js
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
+import pkg from "pg";
+const { Pool } = pkg;
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 export async function initDB() {
-  const db = await open({
-    filename: "./market_data.db",
-    driver: sqlite3.Database
-  });
+  const client = await pool.connect();
 
-  await db.exec(`
+  await client.query(`
     CREATE TABLE IF NOT EXISTS market_data (
-      timestamp TEXT PRIMARY KEY,
+      timestamp TIMESTAMP PRIMARY KEY,
       silverNY REAL,
       silverLondon REAL,
       silverSHA REAL,
@@ -20,32 +22,43 @@ export async function initDB() {
     )
   `);
 
-  return db;
+  client.release();
+  return pool;
 }
 
 export async function insertData(db, data) {
-  const stmt = await db.prepare(`
+  await db.query(
+    `
     INSERT INTO market_data (
       timestamp, silverNY, silverLondon, silverSHA,
       goldNY, goldSilverRatio, spreadSHA_NY
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)
-  `);
-  await stmt.run(
-    data.timestamp,
-    data.silverNY,
-    data.silverLondon,
-    data.silverSHA,
-    data.goldNY,
-    data.goldSilverRatio,
-    data.spreadSHA_NY
+    )
+    VALUES ($1,$2,$3,$4,$5,$6,$7)
+    ON CONFLICT (timestamp) DO NOTHING
+    `,
+    [
+      data.timestamp,
+      data.silverNY,
+      data.silverLondon,
+      data.silverSHA,
+      data.goldNY,
+      data.goldSilverRatio,
+      data.spreadSHA_NY
+    ]
   );
-  await stmt.finalize();
 }
 
 export async function getLatest(db) {
-  return db.get("SELECT * FROM market_data ORDER BY timestamp DESC LIMIT 1");
+  const res = await db.query(
+    "SELECT * FROM market_data ORDER BY timestamp DESC LIMIT 1"
+  );
+  return res.rows[0];
 }
 
 export async function getHistory(db, limit = 1000) {
-  return db.all("SELECT * FROM market_data ORDER BY timestamp ASC LIMIT ?", limit);
+  const res = await db.query(
+    "SELECT * FROM market_data ORDER BY timestamp ASC LIMIT $1",
+    [limit]
+  );
+  return res.rows;
 }
