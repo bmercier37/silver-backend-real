@@ -104,16 +104,23 @@ export async function scrapeFXRateRMBUSD() {
     const html = await fetch(url).then(r => r.text());
     const $ = cheerio.load(html);
 
-    // Le taux est généralement dans le body, sous forme "1 CNY = X USD"
-    const bodyText = $("body").text();
+    // Sélectionne le span contenant USD/CNY
+    const span = $("span")
+      .filter((_, el) => $(el).text().includes("USD/CNY"))
+      .first();
 
-    const match = bodyText.match(/1\s*CNY\s*=\s*([\d.]+)\s*USD/i);
-    if (!match) throw new Error("USD/CNY not found");
+    const rawValue = span.attr("data-value");
 
-    const usdPerCny = parseFloat(match[1]);
-    if (isNaN(usdPerCny) || usdPerCny <= 0) {
+    if (!rawValue) {
+      throw new Error("USD/CNY data-value not found");
+    }
+
+    const value = parseFloat(rawValue);
+
+    if (isNaN(value) || value <= 0) {
       throw new Error("Invalid USD/CNY value");
     }
+     
     return value;
   } catch (err) {
     console.error("FX USD/CNY error");
