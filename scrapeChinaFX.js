@@ -100,20 +100,20 @@ export async function scrapeGoldNY() {
 ========================= */
 export async function scrapeFXRateRMBUSD() {
   try {
-    const url = "https://www.chinafxtools.com/exchange/";
+    const url = "https://themoneyconverter.com/CNY/USD";
     const html = await fetch(url).then(r => r.text());
     const $ = cheerio.load(html);
 
-    // Récupère le texte dans le div.current-rate
-    const rateText = $(".current-rate").text().trim();
+    // Le taux est généralement dans le body, sous forme "1 CNY = X USD"
+    const bodyText = $("body").text();
 
-    // Utilise regex pour extraire le nombre avant "Chinese Yuan(CNY)"
-    const match = rateText.match(/([\d.]+)\s*Chinese Yuan\(CNY\)/);
+    const match = bodyText.match(/1\s*CNY\s*=\s*([\d.]+)\s*USD/i);
     if (!match) throw new Error("USD/CNY not found");
 
-    const value = parseFloat(match[1]);
-    if (isNaN(value)) throw new Error("USD/CNY is NaN");
-
+    const usdPerCny = parseFloat(match[1]);
+    if (isNaN(usdPerCny) || usdPerCny <= 0) {
+      throw new Error("Invalid USD/CNY value");
+    }
     return value;
   } catch (err) {
     console.error("FX USD/CNY error");
