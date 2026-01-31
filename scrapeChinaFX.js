@@ -96,7 +96,7 @@ export async function scrapeGoldNY() {
 }
 
 /* =========================
-   FX – USD/CNY
+   FX – CNY/USD
 ========================= */
 export async function scrapeFXRateRMBUSD() {
   try {
@@ -104,7 +104,7 @@ export async function scrapeFXRateRMBUSD() {
     const html = await fetch(url).then(r => r.text());
     const $ = cheerio.load(html);
 
-    // Sélectionne le span contenant USD/CNY
+    // Sélectionne le span contenant CNY/USD
     const span = $("span")
       .filter((_, el) => $(el).text().includes("USD/CNY"))
       .first();
@@ -112,13 +112,13 @@ export async function scrapeFXRateRMBUSD() {
     const rawValue = span.attr("data-value");
 
     if (!rawValue) {
-      throw new Error("USD/CNY data-value not found");
+      throw new Error("CNY/USD data-value not found");
     }
 
     const value = parseFloat(rawValue);
 
     if (isNaN(value) || value <= 0) {
-      throw new Error("Invalid USD/CNY value");
+      throw new Error("Invalid CNY/USD value");
     }
      
     return value;
