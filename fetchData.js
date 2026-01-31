@@ -22,18 +22,6 @@ const FX_RMB_USD = await scrapeFXRateRMBUSD();
 if (FX_RMB_USD == null) console.warn("⚠️ Scraping failed: FX USD/CNY");
 
 
-// Vérification globale (inchangée)
-if (
-  silverNY == null ||
-  silverLondon == null ||
-  silverSHA_RMB == null ||
-  goldNY == null ||
-  FX_RMB_USD == null
-) {
-  console.error("❌ Initial fetch failed: Missing scraped data");
-  await db.close();
-  throw new Error("Missing scraped data");
-}
 
   // Conversion Silver SHA kg → oz
   const silverSHA = silverSHA_RMB / FX_RMB_USD / 31.1035;
