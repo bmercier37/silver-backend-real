@@ -14,14 +14,14 @@ const PORT = process.env.PORT || 3000;
 app.get("/api/latest", async (req, res) => {
   const db = await initDB();
   const data = await getLatest(db);
-  await db.close();
+  //await db.close();
   res.json(data || { error: "No data yet" });
 });
 
 app.get("/api/history", async (req, res) => {
   const db = await initDB();
   const data = await getHistory(db, 1000);
-  await db.close();
+  //await db.close();
   res.json(data);
 });
 
