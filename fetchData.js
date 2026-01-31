@@ -5,26 +5,35 @@ import { initDB, insertData } from "./db.js";
 export async function fetchAndStore() {
   const db = await initDB();
 
-  // Scraping réel
-  const silverNY = await scrapeSilverNY();
-  const silverLondon = await scrapeSilverLondon();
-  const silverSHA_RMB = await scrapeSilverShanghai();
-  const goldNY = await scrapeGoldNY();
-  const FX_RMB_USD = await scrapeFXRateRMBUSD();// fetchData.js
+// Scraping réel
+const silverNY = await scrapeSilverNY();
+if (silverNY == null) console.warn("⚠️ Scraping failed: Silver NY");
 
-  
-  // Vérification
-  if (
-    silverNY == null ||
-    silverLondon == null ||
-    silverSHA_RMB == null ||
-    goldNY == null ||
-    FX_RMB_USD == null
-  ) {
-    console.error("Initial fetch failed: Missing scraped data");
-    await db.close();
-    throw new Error("Missing scraped data");
-  }
+const silverLondon = await scrapeSilverLondon();
+if (silverLondon == null) console.warn("⚠️ Scraping failed: Silver London");
+
+const silverSHA_RMB = await scrapeSilverShanghai();
+if (silverSHA_RMB == null) console.warn("⚠️ Scraping failed: Silver Shanghai (RMB)");
+
+const goldNY = await scrapeGoldNY();
+if (goldNY == null) console.warn("⚠️ Scraping failed: Gold NY");
+
+const FX_RMB_USD = await scrapeFXRateRMBUSD();
+if (FX_RMB_USD == null) console.warn("⚠️ Scraping failed: FX USD/CNY");
+
+
+// Vérification globale (inchangée)
+if (
+  silverNY == null ||
+  silverLondon == null ||
+  silverSHA_RMB == null ||
+  goldNY == null ||
+  FX_RMB_USD == null
+) {
+  console.error("❌ Initial fetch failed: Missing scraped data");
+  await db.close();
+  throw new Error("Missing scraped data");
+}
 
   // Conversion Silver SHA kg → oz
   const silverSHA = silverSHA_RMB / FX_RMB_USD / 31.1035;
