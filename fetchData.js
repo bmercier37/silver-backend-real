@@ -45,6 +45,6 @@ if (FX_RMB_USD == null) console.warn("⚠️ Scraping failed: FX USD/CNY");
   await insertData(db, data);
   console.log("Data stored:", data);
 
-  await db.close();
+  //await db.close();
   return data;
 }
