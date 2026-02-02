@@ -46,7 +46,7 @@ export async function insertData(db, data) {
       data.silverDE,
       data.goldNY,
       data.goldSilverRatio,
-      data.spreadSHA_NY
+      data.spreadSHA_NY,
       data.spreadDE_NY      
     ]
   );
