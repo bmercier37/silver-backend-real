@@ -19,7 +19,7 @@ export async function initDB() {
       silverDE REAL,
       goldNY REAL,
       goldSilverRatio REAL,
-      spreadSHA_NY REAL
+      spreadSHA_NY REAL,
       spreadDE_NY REAL
     )
   `);
