@@ -22,10 +22,10 @@ const goldNY = await scrapeGoldNY();
 if (goldNY == null) console.warn("⚠️ Scraping failed: Gold NY");
 
 const FX_USD_RMB = await scrapeFXRateUSDRMB();
-if (FX_RMB_USD == null) console.warn("⚠️ Scraping failed: FX USD/CNY");
+if (FX_USD_RMB == null) console.warn("⚠️ Scraping failed: FX USD/CNY");
 
 const FX_USD_EUR = await scrapeFXRateUSDEUR();
-if (FX_RMB_USD == null) console.warn("⚠️ Scraping failed: FX USD/EUR");
+if (FX_USD_RMB == null) console.warn("⚠️ Scraping failed: FX USD/EUR");
 
 
   // Conversion Silver SHA kg → oz & RMB →USD 
