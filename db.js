@@ -16,9 +16,11 @@ export async function initDB() {
       silverNY REAL,
       silverLondon REAL,
       silverSHA REAL,
+      silverDE REAL,
       goldNY REAL,
       goldSilverRatio REAL,
       spreadSHA_NY REAL
+      spreadDE_NY REAL
     )
   `);
 
@@ -30,10 +32,10 @@ export async function insertData(db, data) {
   await db.query(
     `
     INSERT INTO market_data (
-      timestamp, silverNY, silverLondon, silverSHA,
-      goldNY, goldSilverRatio, spreadSHA_NY
+      timestamp, silverNY, silverLondon, silverSHA, silverDE,
+      goldNY, goldSilverRatio, spreadSHA_NY, spreadDE_NY
     )
-    VALUES ($1,$2,$3,$4,$5,$6,$7)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
     ON CONFLICT (timestamp) DO NOTHING
     `,
     [
@@ -41,9 +43,11 @@ export async function insertData(db, data) {
       data.silverNY,
       data.silverLondon,
       data.silverSHA,
+      data.silverDE,
       data.goldNY,
       data.goldSilverRatio,
       data.spreadSHA_NY
+      data.spreadDE_NY      
     ]
   );
 }
