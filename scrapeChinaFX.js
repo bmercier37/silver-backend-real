@@ -73,9 +73,9 @@ export async function scrapeSilverShanghai() {
 }
 
 /* =========================
-   Silver – Köln
+   Silver – DE (EUR)
 ========================= */
-export async function scrapeSilverKrugerrandEUR() {
+export async function scrapeSilverDE() {
   try {
     const url =
       "https://shop.rheinische-scheidestaette.de/silber/silbermuenzen/1-unze-oz-kruegerrand-silber-neuware-jahrgang-2026/";
