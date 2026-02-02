@@ -73,6 +73,39 @@ export async function scrapeSilverShanghai() {
 }
 
 /* =========================
+   Silver – Köln
+========================= */
+export async function scrapeSilverKrugerrandEUR() {
+  try {
+    const url =
+      "https://shop.rheinische-scheidestaette.de/silber/silbermuenzen/1-unze-oz-kruegerrand-silber-neuware-jahrgang-2026/";
+
+    const html = await fetch(url).then((r) => r.text());
+    const $ = cheerio.load(html);
+
+    // Schema.org meta price (most reliable)
+    const rawValue = $('meta[itemprop="price"]').attr("content");
+
+    if (!rawValue) {
+      throw new Error("Silver EUR price not found");
+    }
+
+    const value = parseFloat(rawValue);
+
+    if (isNaN(value) || value <= 0) {
+      throw new Error("Invalid Silver EUR price");
+    }
+
+    return value;
+  } catch (err) {
+    console.error("Silver EUR price scraping error");
+    return null;
+  }
+}
+
+
+
+/* =========================
    GOLD – NEW YORK
 ========================= */
 export async function scrapeGoldNY() {
@@ -96,15 +129,15 @@ export async function scrapeGoldNY() {
 }
 
 /* =========================
-   FX – CNY/USD
+   FX – USD/RMB
 ========================= */
-export async function scrapeFXRateRMBUSD() {
+export async function scrapeFXRateUSDRMB() {
   try {
     const url = "https://themoneyconverter.com/CNY/USD";
     const html = await fetch(url).then(r => r.text());
     const $ = cheerio.load(html);
 
-    // Sélectionne le span contenant CNY/USD
+    // Sélectionne le span contenant USD/CNY
     const span = $("span")
       .filter((_, el) => $(el).text().includes("USD/CNY"))
       .first();
@@ -112,18 +145,51 @@ export async function scrapeFXRateRMBUSD() {
     const rawValue = span.attr("data-value");
 
     if (!rawValue) {
-      throw new Error("CNY/USD data-value not found");
+      throw new Error("USD/CNY data-value not found");
     }
 
     const value = parseFloat(rawValue);
 
     if (isNaN(value) || value <= 0) {
-      throw new Error("Invalid CNY/USD value");
+      throw new Error("Invalid USD/CNY value");
     }
      
     return value;
   } catch (err) {
     console.error("FX USD/CNY error");
+    return null;
+  }
+}
+
+/* =========================
+   FX – USD/EUR
+========================= */
+export async function scrapeFXRateUSDEUR() {
+  try {
+    const url = "https://themoneyconverter.com/EUR/USD";
+    const html = await fetch(url).then(r => r.text());
+    const $ = cheerio.load(html);
+
+    // Sélectionne le span contenant USD/EUR
+    const span = $("span")
+      .filter((_, el) => $(el).text().includes("USD/EUR"))
+      .first();
+
+    const rawValue = span.attr("data-value");
+
+    if (!rawValue) {
+      throw new Error("USD/EUR data-value not found");
+    }
+
+    const value = parseFloat(rawValue);
+
+    if (isNaN(value) || value <= 0) {
+      throw new Error("Invalid USD/EUR value");
+    }
+     
+    return value;
+  } catch (err) {
+    console.error("FX USD/EUR error");
     return null;
   }
 }
