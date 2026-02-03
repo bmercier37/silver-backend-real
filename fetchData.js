@@ -41,7 +41,7 @@ if (FX_USD_INR == null) console.warn("⚠️ Scraping failed: FX USD/INR");
   const silverDE = silverDE_EUR * FX_USD_EUR;
 
   // Conversion Silver INR g→oz & INR →USD 
-  const silverIN = silverIN_INR * FX_USD_INR * 31.1035 ;
+  const silverIN = silverIN_INR * FX_USD_INR * 31.1035 / 1000;
 
   // Calcul ratios et spreads
   const goldSilverRatio = goldNY / silverNY;
