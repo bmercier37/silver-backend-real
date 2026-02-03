@@ -73,13 +73,40 @@ export async function scrapeSilverShanghai() {
 }
 
 /* =========================
+   Silver – IN (INR)
+========================= */
+export async function scrapeSilverIN() {
+  try {
+    const url = "https://todaysilverrate.com/";
+    const html = await fetch(url).then((r) => r.text());
+    const $ = cheerio.load(html);
+
+    const rawText = $(".main-price").first().text().
+
+   // Remove currency symbol and commas
+   const cleaned = rawText.replace(/[₹,]/g, "").trim();
+
+   // Convert to number
+   const value = parseFloat(cleaned);
+
+   if (isNaN(value) || value <= 0) {
+     throw new Error("Invalid Silver INR value");
+   }
+
+   return value;
+  } 
+  catch (err) {
+    console.error("Silver IN price scraping error");
+    return null;
+  }
+}
+
+/* =========================
    Silver – DE (EUR)
 ========================= */
 export async function scrapeSilverDE() {
   try {
-    const url =
-      "https://shop.rheinische-scheidestaette.de/silber/silbermuenzen/1-unze-oz-kruegerrand-silber-neuware-jahrgang-2026/";
-
+    const url = "https://shop.rheinische-scheidestaette.de/silber/silbermuenzen/1-unze-oz-kruegerrand-silber-neuware-jahrgang-2026/";
     const html = await fetch(url).then((r) => r.text());
     const $ = cheerio.load(html);
 
@@ -102,8 +129,6 @@ export async function scrapeSilverDE() {
     return null;
   }
 }
-
-
 
 /* =========================
    GOLD – NEW YORK
@@ -194,3 +219,35 @@ export async function scrapeFXRateUSDEUR() {
   }
 }
 
+/* =========================
+   FX – USD/INR
+========================= */
+export async function scrapeFXRateUSDINR() {
+  try {
+    const url = "https://themoneyconverter.com/INR/USD";
+    const html = await fetch(url).then(r => r.text());
+    const $ = cheerio.load(html);
+
+    // Sélectionne le span contenant USD/INR
+    const span = $("span")
+      .filter((_, el) => $(el).text().includes("USD/INR"))
+      .first();
+
+    const rawValue = span.attr("data-value");
+
+    if (!rawValue) {
+      throw new Error("USD/INR data-value not found");
+    }
+
+    const value = parseFloat(rawValue);
+
+    if (isNaN(value) || value <= 0) {
+      throw new Error("Invalid USD/INR value");
+    }
+     
+    return value;
+  } catch (err) {
+    console.error("FX USD/INR error");
+    return null;
+  }
+}
