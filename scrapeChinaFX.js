@@ -81,7 +81,7 @@ export async function scrapeSilverIN() {
     const html = await fetch(url).then((r) => r.text());
     const $ = cheerio.load(html);
 
-    const rawText = $(".main-price").first().text().
+    const rawText = $(".main-price").first().text();
 
    // Remove currency symbol and commas
    const cleaned = rawText.replace(/[₹,]/g, "").trim();
