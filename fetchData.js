@@ -60,7 +60,7 @@ if (FX_USD_INR == null) console.warn("⚠️ Scraping failed: FX USD/INR");
     goldNY,
     FX_USD_RMB,
     FX_USD_EUR,
-    FX_USD_EUR,
+    FX_USD_INR,
     goldSilverRatio,
     spreadSHA_NY,
     spreadDE_NY,
