@@ -35,7 +35,7 @@ if (FX_USD_INR == null) console.warn("⚠️ Scraping failed: FX USD/INR");
   
 
   // Conversion Silver SHA kg → oz & RMB →USD 
-  const silverSHA = silverSHA_RMB * FX_USD_RMB / 31.1035;
+  const silverSHA = silverSHA_RMB * FX_USD_RMB * 31.1035 / 1000;
 
   // Conversion Silver DE EUR →USD 
   const silverDE = silverDE_EUR * FX_USD_EUR;
